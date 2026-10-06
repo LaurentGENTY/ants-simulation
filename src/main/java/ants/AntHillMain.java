@@ -2,12 +2,10 @@ package ants;
 
 import ants.sim.Simulation;
 import ants.ui.EnvironmentBackgroundPainter;
+import ants.ui.PheromoneToggle;
 import ants.ui.SimulationRenderer;
 import io.jbotsim.ui.JTopology;
 import io.jbotsim.ui.JViewer;
-
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class AntHillMain {
 
@@ -21,17 +19,7 @@ public class AntHillMain {
         JViewer viewer = new JViewer(simulation.topology());
         JTopology view = viewer.getJTopology();
         view.setDefaultBackgroundPainter(new EnvironmentBackgroundPainter(renderer));
-        view.setFocusable(true);
-        view.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_P) {
-                    renderer.togglePheromones();
-                    view.repaint();
-                }
-            }
-        });
-        view.requestFocusInWindow();
+        PheromoneToggle.install(view, renderer);
         simulation.start();
     }
 }
