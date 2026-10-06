@@ -111,8 +111,15 @@ public class AntNode extends WaypointNode {
 
         /* si on est pas en train de creuser */
         if (digging) {
+            // Rocks spawn during the run and may land on the cell being dug: give up and re-plan.
+            if (nextCell.isRock()) {
+                timeDigging = 0;
+                digging = false;
+                setIcon(carryingFood ? HAVING_FOOD_ICON : NORMAL_ICON);
+                antAlgorithm();
+            }
             /* on a fini de creuser on peut aller a la destination */
-            if (nextCell.isDug()) {
+            else if (nextCell.isDug()) {
                 /* on revient à la fourmi de base ou celle qui porte de la nourriture */
                 timeDigging = 0;
                 digging = false;
@@ -128,6 +135,10 @@ public class AntNode extends WaypointNode {
             else
                 dig(nextCell);
         }
+    }
+
+    public boolean isDigging() {
+        return digging;
     }
 
     /* fourmi creuse une cellule */
