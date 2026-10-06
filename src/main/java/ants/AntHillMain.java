@@ -1,70 +1,49 @@
-package main.java.ants;
+package ants;
 
-import ants.environment.*;
+import ants.sim.Simulation;
 import ants.ui.EnvironmentBackgroundPainter;
-import ants.actors.AntNode;
-import ants.actors.QueenNode;
-
-import io.jbotsim.core.Topology;
+import ants.ui.PheromoneToggle;
+import ants.ui.SimulationRenderer;
+import io.jbotsim.ui.JTopology;
 import io.jbotsim.ui.JViewer;
+
+import java.util.function.LongSupplier;
 
 public class AntHillMain {
 
-    private Topology tp;
-    private QueenNode queen;
-
-    public static Environment environment;
+    static final String USAGE = "Usage: AntHillMain [--seed <long>]";
 
     public static void main(String[] args) {
-        new AntHillMain();
+        long seed;
+        try {
+            seed = parseSeed(args, System::nanoTime);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            System.err.println(USAGE);
+            System.exit(1);
+            return;
+        }
+        // Printed so a nice-looking run can be replayed with --seed.
+        System.out.println("Seed: " + seed);
+
+        Simulation simulation = Simulation.interactive(seed);
+        SimulationRenderer renderer = new SimulationRenderer(simulation);
+        JViewer viewer = new JViewer(simulation.topology());
+        JTopology view = viewer.getJTopology();
+        view.setDefaultBackgroundPainter(new EnvironmentBackgroundPainter(renderer));
+        PheromoneToggle.install(view, renderer);
+        simulation.start();
     }
 
-    public AntHillMain() {
-        tp = new Topology(1000,800);
-
-        tp.setNodeModel("ant", AntNode.class);
-        tp.setNodeModel("queen", QueenNode.class);
-        tp.setNodeModel("food", FoodNode.class);
-        tp.setNodeModel("rock", RockNode.class);
-
-        environment = new Environment(tp, 30, 25);
-
-        initializeQueen();
-        initializeFood(15);
-        initializeRocks(5);
-
-        JViewer jv = new JViewer(tp);
-        EnvironmentBackgroundPainter painter = new EnvironmentBackgroundPainter(tp, environment);
-        jv.getJTopology().setDefaultBackgroundPainter(painter);
-
-        tp.start();
+    static long parseSeed(String[] args, LongSupplier fallback) {
+        if (args.length == 0)
+            return fallback.getAsLong();
+        if (args.length != 2 || !args[0].equals("--seed"))
+            throw new IllegalArgumentException("Unexpected arguments: " + String.join(" ", args));
+        try {
+            return Long.parseLong(args[1]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("--seed expects an integer, got \"" + args[1] + "\"");
+        }
     }
-
-    private void initializeFood(int nb) {
-        FoodSpawner foodSpawner = new FoodSpawner(tp, environment);
-        for(int i = 0; i<nb;i++)
-            foodSpawner.spawnRandomFood();
-    }
-
-    private void initializeRocks(int nb) {
-        RockSpawner rockSpawner = new RockSpawner(tp, environment);
-        for(int i = 0; i<nb;i++)
-            rockSpawner.spawnRandomRocks();
-    }
-
-    public void initializeQueen() {
-
-        queen = new QueenNode();
-
-        Cell queenCell = environment.getRandomLocation();
-        queen.setCurrentCell(queenCell);
-        queen.setLocation(queenCell);
-
-        queenCell.setCost(Cell.MIN_COST_VALUE);
-        queenCell.setDug(true);
-
-        tp.addNode(queen);
-
-    }
-
 }
