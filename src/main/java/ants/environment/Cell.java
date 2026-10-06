@@ -1,15 +1,15 @@
 package ants.environment;
 
+import ants.sim.SimConfig;
 import ants.sim.SimRandom;
 
 import io.jbotsim.core.Point;
-import io.jbotsim.core.event.ClockListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Cell extends Point implements ClockListener {
+public class Cell extends Point {
 
     /* cout de la cell */
     public static final int MAX_COST_VALUE = 40;
@@ -24,14 +24,6 @@ public class Cell extends Point implements ClockListener {
     /* pose de pheromones par les fourmis */
     private double foodPheromoneIntensity;
     private double queenPheromoneIntensity;
-    private static final double MAX_FOOD_VALUE = 1;
-    private static final double MAX_QUEEN_VALUE = 1;
-
-    /* disparition des pheromones dans le temps */
-    private int foodPheromoneTTL;
-    private static final int FOOD_TTL = 1000;
-    private int queenPheromoneTTL;
-    private static final int QUEEN_TTL = 1000;
 
     /* nombre de onClock pour creuser la case */
     private int timeDigging;
@@ -54,8 +46,6 @@ public class Cell extends Point implements ClockListener {
         /* initialisation des pheromones */
         this.foodPheromoneIntensity = 0;
         this.queenPheromoneIntensity = 0;
-        this.foodPheromoneTTL = FOOD_TTL;
-        this.queenPheromoneTTL = QUEEN_TTL;
 
         /* initialisation de l'état */
         this.dug = false;
@@ -63,24 +53,15 @@ public class Cell extends Point implements ClockListener {
         this.isRock = false;
     }
 
-    @Override
-    public void onClock() {
-        /* les pheromones diminuent avec le temps (énoncé : 1000 onClock pour la nourriture et 2000 pour la reine) */
-        if(foodPheromoneIntensity > 0)
-            foodPheromoneTTL--;
-        if(queenPheromoneIntensity > 0)
-            queenPheromoneTTL--;
+    /** One tick of exponential decay; values under the floor are cleared so trails really end. */
+    public void evaporate() {
+        foodPheromoneIntensity = decay(foodPheromoneIntensity, SimConfig.FOOD_EVAPORATION_FACTOR);
+        queenPheromoneIntensity = decay(queenPheromoneIntensity, SimConfig.QUEEN_EVAPORATION_FACTOR);
+    }
 
-        /* si on a atteint un round de diminution alors on redemarre le temps de diminution et on reduit les phéromones */
-        if(foodPheromoneTTL == 0) {
-            foodPheromoneTTL = FOOD_TTL;
-            foodPheromoneIntensity = foodPheromoneIntensity - 1;
-        }
-        if(queenPheromoneTTL == 0) {
-            queenPheromoneTTL = QUEEN_TTL;
-            queenPheromoneIntensity = queenPheromoneIntensity - 1;
-        }
-        return;
+    private static double decay(double intensity, double factor) {
+        double next = intensity * factor;
+        return next < SimConfig.PHEROMONE_FLOOR ? 0 : next;
     }
 
     /* methode pour les voisins */
@@ -176,18 +157,14 @@ public class Cell extends Point implements ClockListener {
         return foodPheromoneIntensity;
     }
     public void incrementFoodPheromoneIntensity(double value) {
-        if(foodPheromoneIntensity + value >= MAX_FOOD_VALUE)
-            return;
-        foodPheromoneIntensity += value;
+        foodPheromoneIntensity = Math.min(SimConfig.PHEROMONE_MAX, foodPheromoneIntensity + value);
     }
 
     public double getQueenPheromoneIntensity() {
         return queenPheromoneIntensity;
     }
     public void incrementQueenPheromoneIntensity(double value) {
-        if(queenPheromoneIntensity + value >= MAX_QUEEN_VALUE)
-            return;
-        queenPheromoneIntensity += value;
+        queenPheromoneIntensity = Math.min(SimConfig.PHEROMONE_MAX, queenPheromoneIntensity + value);
     }
 
     /* getter setters booleans d'états */

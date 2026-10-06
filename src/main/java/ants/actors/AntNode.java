@@ -1,5 +1,6 @@
 package ants.actors;
 
+import ants.sim.SimConfig;
 import ants.sim.SimRandom;
 
 import ants.environment.Cell;
@@ -40,9 +41,6 @@ public class AntNode extends WaypointNode {
     private int carriedQuantity;
     private static final int MAX_QUANTITY = 2;
 
-    /* quantite de pheromone ajouté */
-    private static final double FOOD_PHEROMONE_QUANTITY = 0.1;
-    private static final double QUEEN_PHEROMONE_QUANTITY = 0.1;
 
     /* reine mere à qui deposer de la nourriture */
     private QueenNode queen;
@@ -207,7 +205,7 @@ public class AntNode extends WaypointNode {
         /* sinon cela veut dire que nous ne creusons et donc que nous pouvons rechercher de la nourriture ou alors donner a la reine */
 
         /* dans tous les cas on ajoute une pheromone pour la reine */
-        currentCell.incrementQueenPheromoneIntensity(QUEEN_PHEROMONE_QUANTITY);
+        currentCell.incrementQueenPheromoneIntensity(SimConfig.PHEROMONE_DEPOSIT);
 
         /* on sent les noeuds autour */
         sensedNodes.clear(); //sensedNodes.removeAll(sensedNodes) pas opti
@@ -225,7 +223,7 @@ public class AntNode extends WaypointNode {
                     if (n instanceof FoodNode) {
                         if (((FoodNode) n).hasFood()) {
                             takeFood((FoodNode) n);
-                            currentCell.incrementFoodPheromoneIntensity(FOOD_PHEROMONE_QUANTITY);
+                            currentCell.incrementFoodPheromoneIntensity(SimConfig.PHEROMONE_DEPOSIT);
                             returnToQueen();
                             return;
                         }
@@ -307,7 +305,7 @@ public class AntNode extends WaypointNode {
     private void returnToQueen() {
 
         /* dans tous les cas je mets une pheromone sur ma case */
-        currentCell.incrementFoodPheromoneIntensity(FOOD_PHEROMONE_QUANTITY);
+        currentCell.incrementFoodPheromoneIntensity(SimConfig.PHEROMONE_DEPOSIT);
 
         /* recupere les cellules adjacentes afin de savoir ou se diriger */
         neighbors = currentCell.getAllNeighbors();
@@ -324,7 +322,7 @@ public class AntNode extends WaypointNode {
         /* si on trouve la reine dans les cellules voisines */
         for (Node n : sensedNodes) {
             if (n instanceof QueenNode && n.equals(queen)) {
-                currentCell.incrementQueenPheromoneIntensity(QUEEN_PHEROMONE_QUANTITY);
+                currentCell.incrementQueenPheromoneIntensity(SimConfig.PHEROMONE_DEPOSIT);
                 addDestination(queen.getCurrentCell());
                 return;
             }
