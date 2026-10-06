@@ -36,7 +36,7 @@ public class FoodNode extends CellLocatedNode {
         /* suppresion de la nourriture au bout de TTL rounds */
         TTL--;
         if(TTL <= 0)
-            die();
+            vanish();
 
         super.onPostClock();
     }
@@ -45,9 +45,16 @@ public class FoodNode extends CellLocatedNode {
         this.foodQuantity = foodQuantity;
         /* suppression de la nourriture si le stock est vide */
         if (foodQuantity <= 0)
-            die();
+            vanish();
 
         return;
+    }
+
+    // Free the cell, otherwise stale food flags slowly leave spawners with no free cell.
+    private void vanish() {
+        if (currentCell != null)
+            currentCell.setFood(false);
+        die();
     }
 
     public int getQuantity(){

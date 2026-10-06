@@ -27,9 +27,15 @@ public class RockSpawner{
         RockNode r = new RockNode();
 
         /* on créé une pierre random en verifiant qu'elle ne superpose pas avec de la nourriture */
-        Cell location = environment.getRandomLocationDepth(0.6,5);
-        while(location.isFood() || location.isDug())
-            location = environment.getRandomLocationDepth(0.6,5);
+        Cell location = null;
+        for (int attempt = 0; attempt < SimConfig.MAX_SPAWN_ATTEMPTS && location == null; attempt++) {
+            Cell candidate = environment.getRandomLocationDepth(0.6,5);
+            if (!candidate.isFood() && !candidate.isDug())
+                location = candidate;
+        }
+        // Tunnels and food can fill the grid: skip this spawn rather than spin forever.
+        if (location == null)
+            return;
         location.setRock(true);
 
         /* on l'ajoute à la topologie */

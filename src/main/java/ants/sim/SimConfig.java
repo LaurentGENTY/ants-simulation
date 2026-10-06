@@ -31,6 +31,8 @@ public final class SimConfig {
     public static final double QUEEN_SPAWN_PROBABILITY = 0.01;
     public static final double FOOD_SPAWN_PROBABILITY = 0.01;
     public static final double ROCK_SPAWN_PROBABILITY = 0.005;
+    /** Random picks tried before a spawn is skipped because no free cell was found. */
+    public static final int MAX_SPAWN_ATTEMPTS = 200;
 
     public static final double ANT_SPEED = 8;
 }
