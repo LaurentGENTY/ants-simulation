@@ -3,18 +3,22 @@ package ants.actors;
 import ants.sim.SimConfig;
 import ants.sim.SimRandom;
 
-
 public class QueenNode extends CellLocatedNode {
 
     /* stock de nourriture (pas de TTL, une reine fourmi peut vivre jusqua 37 ans !) */
     private int foodStock;
+    private int foodDelivered;
 
-    public QueenNode(){
+    public QueenNode() {
+        this(SimConfig.QUEEN_INITIAL_STOCK);
+    }
+
+    public QueenNode(int initialStock) {
         super();
-        foodStock = 10;
+        foodStock = initialStock;
 
         setIcon("/images/ant-queen.png");
-        setIconSize(getIconSize()*2);
+        setIconSize(getIconSize() * 2);
     }
 
     @Override
@@ -24,22 +28,16 @@ public class QueenNode extends CellLocatedNode {
             produceOffspring();
     }
 
-    @Override
-    public void onPostClock() {
-        super.onPostClock();
-    }
-
     private boolean shouldProduceOffspring() {
-        /* FAIRE SPAWN PEU DE FOURMIS  :::::
-        if(getTime() % 1000 == 0)
-            return true;
-        return false; */
         return SimRandom.get().nextDouble() < SimConfig.QUEEN_SPAWN_PROBABILITY;
     }
 
-    public void produceOffspring(){
-        if(foodStock <= 0)
+    public void produceOffspring() {
+        if (foodStock <= 0) {
             die();
+            // A dead queen must not lay: the original fell through and spawned anyway.
+            return;
+        }
         foodStock--;
 
         AntNode babyAnt = new AntNode(this);
@@ -47,8 +45,16 @@ public class QueenNode extends CellLocatedNode {
         getTopology().addNode(babyAnt);
     }
 
-    /* stock de nourriture */
     public void increaseFoodStock(int value) {
         this.foodStock += value;
+        this.foodDelivered += value;
+    }
+
+    public int getFoodStock() {
+        return foodStock;
+    }
+
+    public int getFoodDelivered() {
+        return foodDelivered;
     }
 }

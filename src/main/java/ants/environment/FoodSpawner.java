@@ -4,10 +4,9 @@ import ants.sim.SimConfig;
 import ants.sim.SimRandom;
 
 import io.jbotsim.core.Topology;
-import io.jbotsim.core.event.ClockListener;
 
 
-public class FoodSpawner implements ClockListener{
+public class FoodSpawner{
 
     private Topology tp;
     private Environment environment;
@@ -15,11 +14,9 @@ public class FoodSpawner implements ClockListener{
     public FoodSpawner(Topology topology, Environment environment) {
         tp = topology;
         this.environment = environment;
-        tp.addClockListener(this);
     }
 
-    @Override
-    public void onClock() {
+    public void tick() {
         if (shouldSpawn())
             spawnRandomFood();
     }

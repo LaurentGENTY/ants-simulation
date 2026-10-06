@@ -1,6 +1,7 @@
 package ants.actors;
 
 import ants.environment.Cell;
+import ants.sim.SimConfig;
 import io.jbotsim.core.Node;
 import io.jbotsim.core.Point;
 
@@ -15,25 +16,22 @@ abstract public class WaypointNode extends CellLocatedNode {
 
     Queue<Cell> destinations = new LinkedList<Cell>();
 
-    double speed = 8;
+    double speed = SimConfig.ANT_SPEED;
 
     @Override
     public void onClock() {
-        if(!destinations.isEmpty()) {
-            Point dest = destinations.peek();
-
-            /* si on est pas sur la cellule : on sy dirige */
-            if (distance(dest) > speed) {
-                setDirection(dest);
-                move(speed);
-            } else {
-                /* on est arrive a destination : on la retire de la queue */
-                setLocation(dest);
-                destinations.poll();
-                onArrival();
-            }
+        if (destinations.isEmpty())
+            return;
+        Point dest = destinations.peek();
+        if (distance(dest) > speed) {
+            setDirection(dest);
+            move(speed);
+        } else {
+            setLocation(dest);
+            destinations.poll();
+            // Only on real arrival: calling it every tick re-planned and piled up destinations.
+            onArrival();
         }
-        onArrival();
     }
 
     abstract public void onArrival();

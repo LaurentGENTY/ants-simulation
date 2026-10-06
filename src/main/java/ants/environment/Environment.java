@@ -7,6 +7,7 @@ import io.jbotsim.core.Topology;
 
 import java.util.Random;
 import java.util.Vector;
+import java.util.function.Consumer;
 
 public class Environment {
     private Vector<Vector> env;
@@ -102,6 +103,16 @@ public class Environment {
         Point location = new Point(gridStartLocation.getX() + x * width, gridStartLocation.getY() + y * height);
         Cell cell = new Cell(location);
         return cell;
+    }
+
+    public void forEachCell(Consumer<Cell> action) {
+        for (int x = 0; x < nbColumn; x++)
+            for (int y = 0; y < nbRow; y++)
+                action.accept(getElement(x, y));
+    }
+
+    public void evaporate() {
+        forEachCell(Cell::evaporate);
     }
 
     public Vector<Vector> getGrid() {
