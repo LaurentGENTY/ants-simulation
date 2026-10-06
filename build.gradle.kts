@@ -33,7 +33,7 @@ val captureSeed = providers.gradleProperty("captureSeed").getOrElse("3")
 val captureEvery = providers.gradleProperty("captureEvery").getOrElse("5")
 val framesDir = layout.buildDirectory.dir("capture/frames")
 
-val renderFrames by tasks.registering(JavaExec::class) {
+val renderFrames = tasks.register<JavaExec>("renderFrames") {
     group = "showcase"
     description = "Renders simulation frames headlessly into build/capture/frames."
     classpath = sourceSets["main"].runtimeClasspath
@@ -47,14 +47,18 @@ tasks.register("capture") {
     group = "showcase"
     description = "Renders frames, then builds media/colony.{mp4,gif} and media/colony-poster.png with ffmpeg."
     dependsOn(renderFrames)
+    // Resolved at configuration time: doLast must not reference the build script (configuration cache).
+    val frames = framesDir.get().asFile
+    val media = layout.projectDirectory.dir("media").asFile
     doLast {
-        val frames = framesDir.get().asFile
+        val ffmpegNames = listOf("ffmpeg", "ffmpeg.exe")
         val ffmpeg = System.getenv("PATH").orEmpty().split(File.pathSeparator)
-            .map { File(it, "ffmpeg") }.firstOrNull { it.canExecute() }
+            .flatMap { dir -> ffmpegNames.map { File(dir, it) } }
+            .firstOrNull { it.canExecute() }
             ?: throw GradleException(
                 "ffmpeg not found on PATH. Install it (macOS: brew install ffmpeg) and re-run " +
                 "./gradlew capture. Rendered frames are kept in $frames")
-        val media = file("media").apply { mkdirs() }
+        media.mkdirs()
         val input = File(frames, "frame_%05d.png").path
 
         fun run(vararg command: String) {
@@ -68,7 +72,7 @@ tasks.register("capture") {
             "-vf", "fps=15,scale=640:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=4",
             File(media, "colony.gif").path)
 
-        val last = frames.listFiles()!!.filter { it.name.matches(Regex("frame_\\d{5}\\.png")) }.maxBy { it.name }
+        val last = frames.listFiles()!!.filter { it.name.matches(Regex("frame_\\d+\\.png")) }.maxBy { it.name.filter(Char::isDigit).toInt() }
         last.copyTo(File(media, "colony-poster.png"), overwrite = true)
         logger.lifecycle("Media written to ${media.path}")
     }

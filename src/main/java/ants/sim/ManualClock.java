@@ -20,7 +20,10 @@ public class ManualClock extends Clock {
         last = this;
     }
 
-    /** The clock created by the latest Topology.start() using this model. */
+    /**
+     * The clock created by the latest Topology.start() using this model. Assumes manual
+     * simulations are started one at a time on a single thread.
+     */
     public static ManualClock last() {
         return last;
     }
