@@ -2,7 +2,12 @@ package ants;
 
 import ants.sim.Simulation;
 import ants.ui.EnvironmentBackgroundPainter;
+import ants.ui.SimulationRenderer;
+import io.jbotsim.ui.JTopology;
 import io.jbotsim.ui.JViewer;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class AntHillMain {
 
@@ -12,9 +17,21 @@ public class AntHillMain {
         System.out.println("Seed: " + seed);
 
         Simulation simulation = Simulation.interactive(seed);
+        SimulationRenderer renderer = new SimulationRenderer(simulation);
         JViewer viewer = new JViewer(simulation.topology());
-        viewer.getJTopology().setDefaultBackgroundPainter(
-                new EnvironmentBackgroundPainter(simulation.topology(), simulation.environment()));
+        JTopology view = viewer.getJTopology();
+        view.setDefaultBackgroundPainter(new EnvironmentBackgroundPainter(renderer));
+        view.setFocusable(true);
+        view.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_P) {
+                    renderer.togglePheromones();
+                    view.repaint();
+                }
+            }
+        });
+        view.requestFocusInWindow();
         simulation.start();
     }
 }
