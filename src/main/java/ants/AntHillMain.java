@@ -1,4 +1,4 @@
-package main.java.ants;
+package ants;
 
 import ants.environment.*;
 import ants.ui.EnvironmentBackgroundPainter;

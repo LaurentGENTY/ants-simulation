@@ -16,9 +16,9 @@ import java.util.Random;
 public class AntNode extends WaypointNode {
 
     /* differents icones pour les etats */
-    private static final String NORMAL_ICON = "/resources/images/ant.png";
-    private static final String DIGGING_ICON = "/resources/images/ant-digging.png";
-    private static final String HAVING_FOOD_ICON = "/resources/images/ant-bean.png";
+    private static final String NORMAL_ICON = "/images/ant.png";
+    private static final String DIGGING_ICON = "/images/ant-digging.png";
+    private static final String HAVING_FOOD_ICON = "/images/ant-bean.png";
 
     /* temps de survie mini et maxi de la fourmi */
     private static final int MIN_TTL = 500;

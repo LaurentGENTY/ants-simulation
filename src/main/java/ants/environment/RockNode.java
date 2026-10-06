@@ -9,7 +9,7 @@ public class RockNode extends CellLocatedNode {
     public RockNode(){
         super();
         /* initialisation de l'icone */
-        setIcon("/resources/images/rock.png");
+        setIcon("/images/rock.png");
         setWirelessStatus(false);
     }
 }

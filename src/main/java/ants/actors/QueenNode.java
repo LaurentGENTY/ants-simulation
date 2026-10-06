@@ -11,7 +11,7 @@ public class QueenNode extends CellLocatedNode {
         super();
         foodStock = 10;
 
-        setIcon("/resources/images/ant-queen.png");
+        setIcon("/images/ant-queen.png");
         setIconSize(getIconSize()*2);
     }
 

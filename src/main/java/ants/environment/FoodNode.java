@@ -26,7 +26,7 @@ public class FoodNode extends CellLocatedNode {
         TTL = new Random().nextInt(MAX_TTL) + MIN_TTL;
 
         /* initialisation de l'icone */
-        setIcon("/resources/images/ant-worm.png");
+        setIcon("/images/ant-worm.png");
         setIconSize((int)(getIconSize()* foodQuantity /10*0.9));
     }
 

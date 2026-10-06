@@ -50,7 +50,7 @@ public class EnvironmentBackgroundPainter extends JBackgroundPainter {
     public void paintBackground(UIComponent c, Topology topology) {
         Graphics2D g = (Graphics2D) c.getComponent();
         Toolkit tk = Toolkit.getDefaultToolkit();
-        Image image = tk.getImage(getClass().getResource("/resources/images/ant-soil.jpg"));
+        Image image = tk.getImage(getClass().getResource("/images/ant-soil.jpg"));
         g.drawImage(image, 0, 0, null);
 
         drawMap(g);
