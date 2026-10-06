@@ -51,6 +51,12 @@ class SimulationTest {
     }
 
     @Test
+    void tickCountMatchesStepsTaken() {
+        assertEquals(10, run(42L, 10).stats().tick());
+        assertEquals(0, Simulation.manual(42L).stats().tick());
+    }
+
+    @Test
     void stepRequiresManualClock() {
         Simulation sim = Simulation.interactive(1L);
         assertThrows(IllegalStateException.class, sim::step);

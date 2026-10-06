@@ -22,6 +22,8 @@ public final class Simulation {
     private final RockSpawner rockSpawner;
     private final boolean manualClock;
     private ManualClock clock;
+    // Own counter: JBotSim skips the time increment on its first round, so getTime() lags by one.
+    private int ticks;
     private volatile ColonyStats stats;
 
     public static Simulation interactive(long seed) {
@@ -52,7 +54,7 @@ public final class Simulation {
         for (int i = 0; i < SimConfig.INITIAL_ROCKS; i++)
             rockSpawner.spawnRandomRocks();
 
-        stats = ColonyStats.snapshot(topology, queen);
+        stats = ColonyStats.snapshot(ticks, topology, queen);
         // One listener only: JBotSim keeps listeners in a HashMap, so several RNG-consuming
         // listeners would run in an arbitrary order and break seed reproducibility.
         topology.addClockListener(this::onWorldTick);
@@ -73,7 +75,8 @@ public final class Simulation {
         environment.evaporate();
         foodSpawner.tick();
         rockSpawner.tick();
-        stats = ColonyStats.snapshot(topology, queen);
+        ticks++;
+        stats = ColonyStats.snapshot(ticks, topology, queen);
     }
 
     public void start() {
