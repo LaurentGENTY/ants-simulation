@@ -1,5 +1,7 @@
 package ants.environment;
 
+import ants.sim.SimRandom;
+
 import io.jbotsim.core.Point;
 import io.jbotsim.core.Topology;
 
@@ -14,7 +16,6 @@ public class Environment {
     private Point gridStartLocation;
     private final double elementWidth;
     private final double elementHeight;
-    private final Random locationRandom;
 
     public Environment(Topology tp, int nbColumn, int nbRow) {
         this.tp = tp;
@@ -24,7 +25,6 @@ public class Environment {
         double usedHeight = tp.getHeight() * 2. / 3;
         elementHeight = usedHeight / nbRow;
 
-        locationRandom = new Random();
 
         createEnvironment();
     }
@@ -116,12 +116,12 @@ public class Environment {
     }
 
     public Cell getRandomLocation() {
-        return getElement(locationRandom.nextInt(nbColumn-2)+1, locationRandom.nextInt(nbRow-2)+1);
+        return getElement(SimRandom.get().nextInt(nbColumn-2)+1, SimRandom.get().nextInt(nbRow-2)+1);
     }
 
     /* renvoit une cellule aleatoire compte tenu de la profondeur */
     public Cell getRandomLocationDepth(double height, int derivative) {
-        Random r = new Random();
+        Random r = SimRandom.get();
         double a = (nbRow - 2) * height;
         int b = (int) Math.floor(a);
         int rows = (int) Math.round(r.nextGaussian() * derivative) + b;
@@ -129,7 +129,7 @@ public class Environment {
             rows = nbRow - 2;
         else if (rows < 1)
             rows = 1;
-        return getElement(locationRandom.nextInt(nbColumn-2)+1, rows + 1);
+        return getElement(SimRandom.get().nextInt(nbColumn-2)+1, rows + 1);
     }
 
     public int getNbColumn() {

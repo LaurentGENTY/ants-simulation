@@ -1,6 +1,8 @@
 package ants.actors;
 
-import java.util.Random;
+import ants.sim.SimConfig;
+import ants.sim.SimRandom;
+
 
 public class QueenNode extends CellLocatedNode {
 
@@ -32,7 +34,7 @@ public class QueenNode extends CellLocatedNode {
         if(getTime() % 1000 == 0)
             return true;
         return false; */
-        return new Random().nextDouble() < 0.01;
+        return SimRandom.get().nextDouble() < SimConfig.QUEEN_SPAWN_PROBABILITY;
     }
 
     public void produceOffspring(){

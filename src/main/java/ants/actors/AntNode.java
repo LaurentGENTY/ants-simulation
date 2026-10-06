@@ -1,5 +1,7 @@
 package ants.actors;
 
+import ants.sim.SimRandom;
+
 import ants.environment.Cell;
 import ants.environment.FoodNode;
 import ants.comparators.FoodPheromoneComparator;
@@ -75,7 +77,7 @@ public class AntNode extends WaypointNode {
         this.neighborsSortedQueen = new ArrayList<Cell>();
 
         /* temps de vie de la fourmi */
-        this.TTL = new Random().nextInt(MAX_TTL) + MIN_TTL;
+        this.TTL = SimRandom.get().nextInt(MAX_TTL) + MIN_TTL;
 
         /* initialisation des booleans d'états */
         this.carryingFood = false;
@@ -151,7 +153,7 @@ public class AntNode extends WaypointNode {
 
     protected Cell pickNeighBoringCell() {
         Cell nextCell = null;
-        Random random = new Random();
+        Random random = SimRandom.get();
         int rInt;
 
         while (nextCell == null || nextCell.isRock()) {
@@ -345,7 +347,6 @@ public class AntNode extends WaypointNode {
 
     /* méthodes pour la nourriture (drop et take) */
     public void takeFood(FoodNode node) {
-        System.out.println("Fourmi " + this.getID() + " prends de la nourriture " + node.getID() + ", reste " + node.getQuantity());
         /* la fourmi prend de la nourriture */
         carryingFood = true;
         foundFood = true;
@@ -353,12 +354,11 @@ public class AntNode extends WaypointNode {
 
         /* prends SOIT un peu de nourriture (1) ou BEAUCOUP (2) (si elle est musclée elle peut en prendre beaucoup !) */
         /* et c'est plus rapide pour réduire toute la nourriture d'une cellule ! */
-        this.carriedQuantity = (new Random()).nextInt(MAX_QUANTITY) + 1;
+        this.carriedQuantity = SimRandom.get().nextInt(MAX_QUANTITY) + 1;
         node.setQuantity(node.getQuantity() - carriedQuantity);
     }
 
     public void dropFood() {
-        System.out.println("Fourmi " + this.getID() + " pose " + carriedQuantity + " nourriture a la reine " + queen.getID());
         /* augmente la quantité de nourriture de ce qu'on a pris */
         queen.increaseFoodStock(carriedQuantity);
 

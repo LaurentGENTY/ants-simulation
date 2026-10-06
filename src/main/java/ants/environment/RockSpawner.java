@@ -1,20 +1,20 @@
 package ants.environment;
 
+import ants.sim.SimConfig;
+import ants.sim.SimRandom;
+
 import io.jbotsim.core.Topology;
 import io.jbotsim.core.event.ClockListener;
 
-import java.util.Random;
 
 public class RockSpawner implements ClockListener{
 
-    private final Random random;
     private Topology tp;
     private Environment environment;
 
     public RockSpawner(Topology topology, Environment environment) {
         tp = topology;
         this.environment = environment;
-        random = new Random();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class RockSpawner implements ClockListener{
     }
 
     private boolean shouldSpawn() {
-        return random.nextDouble() < 0.005;
+        return SimRandom.get().nextDouble() < SimConfig.ROCK_SPAWN_PROBABILITY;
     }
 
 }

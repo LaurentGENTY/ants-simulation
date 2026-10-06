@@ -1,13 +1,14 @@
 package ants.environment;
 
+import ants.sim.SimConfig;
+import ants.sim.SimRandom;
+
 import io.jbotsim.core.Topology;
 import io.jbotsim.core.event.ClockListener;
 
-import java.util.Random;
 
 public class FoodSpawner implements ClockListener{
 
-    private final Random random;
     private Topology tp;
     private Environment environment;
 
@@ -15,7 +16,6 @@ public class FoodSpawner implements ClockListener{
         tp = topology;
         this.environment = environment;
         tp.addClockListener(this);
-        random = new Random();
     }
 
     @Override
@@ -41,6 +41,6 @@ public class FoodSpawner implements ClockListener{
     }
 
     private boolean shouldSpawn() {
-        return random.nextDouble() < 0.01;
+        return SimRandom.get().nextDouble() < SimConfig.FOOD_SPAWN_PROBABILITY;
     }
 }

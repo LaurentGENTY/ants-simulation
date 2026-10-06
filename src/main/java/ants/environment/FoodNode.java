@@ -1,8 +1,9 @@
 package ants.environment;
 
+import ants.sim.SimRandom;
+
 import ants.actors.CellLocatedNode;
 
-import java.util.Random;
 
 public class FoodNode extends CellLocatedNode {
 
@@ -19,11 +20,11 @@ public class FoodNode extends CellLocatedNode {
         super();
         setWirelessStatus(false);
 
-        setDirection(new Random().nextDouble()*2*Math.PI);
+        setDirection(SimRandom.get().nextDouble()*2*Math.PI);
 
         /* initialisation de la nourriture */
-        foodQuantity = new Random().nextInt(MIN_QUANTITY) + MIN_QUANTITY;
-        TTL = new Random().nextInt(MAX_TTL) + MIN_TTL;
+        foodQuantity = SimRandom.get().nextInt(MIN_QUANTITY) + MIN_QUANTITY;
+        TTL = SimRandom.get().nextInt(MAX_TTL) + MIN_TTL;
 
         /* initialisation de l'icone */
         setIcon("/images/ant-worm.png");

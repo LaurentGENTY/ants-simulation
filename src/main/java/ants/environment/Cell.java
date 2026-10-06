@@ -1,12 +1,13 @@
 package ants.environment;
 
+import ants.sim.SimRandom;
+
 import io.jbotsim.core.Point;
 import io.jbotsim.core.event.ClockListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class Cell extends Point implements ClockListener {
 
@@ -44,7 +45,7 @@ public class Cell extends Point implements ClockListener {
         super(location);
 
         /* couleur de la case (cout) */
-        this.cost = new Random().nextInt(MAX_COST_VALUE - MIN_COST_VALUE+1) + MIN_COST_VALUE+1;
+        this.cost = SimRandom.get().nextInt(MAX_COST_VALUE - MIN_COST_VALUE+1) + MIN_COST_VALUE+1;
         this.initialCost = cost;
 
         /* le temps restant pour creuser une case depend de son cout initial (de sa profondeur) */
