@@ -1,5 +1,6 @@
 package ants.capture;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /** Validated command-line options of {@link CaptureMain}. */
@@ -19,9 +20,9 @@ public record CaptureOptions(long seed, int ticks, int every, Path out) {
                 throw new IllegalArgumentException("Missing value for " + flag);
             String value = args[i + 1];
             switch (flag) {
-                case "--seed" -> seed = Long.parseLong(value);
-                case "--ticks" -> ticks = Integer.parseInt(value);
-                case "--every" -> every = Integer.parseInt(value);
+                case "--seed" -> seed = parseLong(flag, value);
+                case "--ticks" -> ticks = parseInt(flag, value);
+                case "--every" -> every = parseInt(flag, value);
                 case "--out" -> out = Path.of(value);
                 default -> throw new IllegalArgumentException("Unknown option: " + flag);
             }
@@ -32,6 +33,24 @@ public record CaptureOptions(long seed, int ticks, int every, Path out) {
             throw new IllegalArgumentException("--every must be > 0");
         if (every > ticks)
             throw new IllegalArgumentException("--every must be <= --ticks");
+        if (Files.exists(out) && !Files.isDirectory(out))
+            throw new IllegalArgumentException("--out must be a directory: " + out);
         return new CaptureOptions(seed, ticks, every, out);
+    }
+
+    private static long parseLong(String flag, String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(flag + " expects an integer, got \"" + value + "\"");
+        }
+    }
+
+    private static int parseInt(String flag, String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(flag + " expects an integer, got \"" + value + "\"");
+        }
     }
 }
