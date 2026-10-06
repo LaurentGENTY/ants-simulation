@@ -46,6 +46,9 @@ public class QueenNode extends CellLocatedNode {
     }
 
     public void increaseFoodStock(int value) {
+        // die() only flags the node; ants processed later in the same tick still reach her.
+        if (isDying())
+            return;
         this.foodStock += value;
         this.foodDelivered += value;
     }

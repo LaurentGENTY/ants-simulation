@@ -25,6 +25,21 @@ class QueenNodeTest {
     }
 
     @Test
+    void deadQueenAcceptsNoMoreFood() {
+        Topology tp = new Topology(100, 100);
+        tp.setClockModel(ManualClock.class);
+        QueenNode queen = new QueenNode(5);
+        tp.addNode(50, 50, queen);
+        tp.start();
+
+        queen.die();
+        queen.increaseFoodStock(2);
+
+        assertEquals(5, queen.getFoodStock());
+        assertEquals(0, queen.getFoodDelivered());
+    }
+
+    @Test
     void deliveriesAreCounted() {
         QueenNode queen = new QueenNode(10);
         queen.increaseFoodStock(2);
