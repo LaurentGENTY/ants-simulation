@@ -14,7 +14,6 @@ import io.jbotsim.core.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Random;
 
 public class AntNode extends WaypointNode {
 
@@ -143,51 +142,9 @@ public class AntNode extends WaypointNode {
 
     /* choisi une cellule aleatoire dans les 8 cases autour de celle courante */
     public void pickRandomDestination() {
-        /* une fois arrivee a destination, la fourmi prends une case aléatoire adjacente
-         * et l'ajoute a ses destinations */
-        Cell cell = pickNeighBoringCell();
-        addDestination(cell);
-    }
-
-    protected Cell pickNeighBoringCell() {
-        Cell nextCell = null;
-        Random random = SimRandom.get();
-        int rInt;
-
-        while (nextCell == null || nextCell.isRock()) {
-            rInt = random.nextInt(8);
-
-            switch (rInt) {
-                case 0:
-                    nextCell = getCurrentCell().getTopNeighbor();
-                    break;
-                case 1:
-                    nextCell = getCurrentCell().getTopRightNeighbor();
-                    break;
-                case 2:
-                    nextCell = getCurrentCell().getRightNeighbor();
-                    break;
-                case 3:
-                    nextCell = getCurrentCell().getBottomRightNeighbor();
-                    break;
-                case 4:
-                    nextCell = getCurrentCell().getBottomNeighbor();
-                    break;
-                case 5:
-                    nextCell = getCurrentCell().getBottomLeftNeighbor();
-                    break;
-                case 6:
-                    nextCell = getCurrentCell().getLeftNeighbor();
-                    break;
-                case 7:
-                    nextCell = getCurrentCell().getTopLeftNeighbor();
-                    break;
-                default:
-                    /* erreur */
-                    break;
-            }
-        }
-        return nextCell;
+        Cell cell = currentCell.randomWalkableNeighbor(SimRandom.get());
+        // Boxed in by rocks or the grid edge: wait on the spot and retry on next arrival.
+        addDestination(cell != null ? cell : currentCell);
     }
 
     @Override

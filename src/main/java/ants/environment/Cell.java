@@ -8,6 +8,7 @@ import io.jbotsim.core.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Cell extends Point {
 
@@ -139,6 +140,17 @@ public class Cell extends Point {
                 neighbors.add(getNeighBor(i));
         }
         return neighbors;
+    }
+
+    /** Uniform pick among neighbours an ant may enter, or null when the cell is boxed in. */
+    public Cell randomWalkableNeighbor(Random random) {
+        ArrayList<Cell> walkable = new ArrayList<>();
+        for (Cell neighbor : getAllNeighbors())
+            if (!neighbor.isRock())
+                walkable.add(neighbor);
+        if (walkable.isEmpty())
+            return null;
+        return walkable.get(random.nextInt(walkable.size()));
     }
 
     /* getters setters cout */
